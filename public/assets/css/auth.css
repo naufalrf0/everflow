@@ -1,0 +1,149 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: linear-gradient(to bottom, #d0f1ff, #6aaedb);
+}
+
+.container {
+    display: flex;
+    width: 800px;
+    height: 500px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+}
+
+.form-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    text-align: center;
+}
+
+/* Sign In Section */
+.sign-in {
+    background-color: #f9f9f9;
+}
+
+.sign-in h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.social-icons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.icon {
+    font-size: 24px;
+    background-color: #e0e0e0;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sign-in p {
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.sign-in form input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    color: #333;
+}
+
+.sign-in form input::placeholder {
+    color: #aaa;
+}
+
+.sign-in form .forgot-password {
+    color: #007bff;
+    font-size: 14px;
+    text-decoration: none;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.sign-in form .sign-in-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.sign-in form .sign-in-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Sign Up Section */
+.sign-up {
+    background-color: #00aaff;
+    color: white;
+}
+
+.sign-up h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.sign-up p {
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+.sign-up .sign-up-btn {
+    padding: 12px 30px;
+    background-color: transparent;
+    color: white;
+    border: 2px solid white;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sign-up .sign-up-btn:hover {
+    background-color: white;
+    color: #00aaff;
+}
+
+/* Animation for transitioning sections */
+.container.active .login-section {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.container.active .signup-section {
+    transform: translateX(-100%);
+    opacity: 1;
+}
