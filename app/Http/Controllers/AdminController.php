@@ -2,22 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Bandul;
-use Illuminate\Http\Request;
+use App\Services\BandulService;
 
 class AdminController extends Controller
 {
+    protected $bandulService;
+
+    public function __construct(BandulService $bandulService)
+    {
+        $this->bandulService = $bandulService;
+    }
+
     public function index()
     {
-        $bandulData = Bandul::latest()->take(3)->get()->reverse();
-
-        $dashboardData = [
-            'kecepatan_bandul' => $bandulData->last()->kecepatan_bandul ?? 0,
-            'total_energi' => $bandulData->last()->total_daya ?? 0,
-            'voltase_baterai' => $bandulData->last()->voltase_baterai ?? 0,
-            'report' => $bandulData,
-        ];
-
-        return view('admin.index', compact('dashboardData'));
+        $dashboardData = $this->bandulService->getDashboardData();
+        return view('admin.index', data: compact('dashboardData'));
     }
 }

@@ -4,7 +4,6 @@
 @section('page-title', 'Manajemen User')
 
 @section('content')
-
     <div class="mb-3">
         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">Tambah User</button>
     </div>
@@ -35,14 +34,19 @@
                     <td>{{ $user->email }}</td>
                     <td>{{ ucfirst($user->role) }}</td>
                     <td>
-                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#editUserModal{{ $user->id }}">Edit</button>
-                        <form action="{{ route('user-management.destroy', $user->id) }}" method="POST"
-                            class="d-inline delete-form">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-danger btn-sm delete-button" type="button">Hapus</button>
-                        </form>
+                        <!-- Show Edit and Delete options only if the user is not admin -->
+                        @if ($user->role !== 'admin')
+                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#editUserModal{{ $user->id }}">Edit</button>
+                            <form action="{{ route('user-management.destroy', $user->id) }}" method="POST"
+                                class="d-inline delete-form">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-danger btn-sm delete-button" type="button">Hapus</button>
+                            </form>
+                        @else
+                            <span class="badge bg-secondary">Tidak dapat diubah</span>
+                        @endif
                     </td>
                 </tr>
             @endforeach
@@ -63,9 +67,7 @@
                             <h5 class="modal-title" id="editUserLabel{{ $user->id }}">Edit User</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <!-- Modal Body -->
                         <div class="modal-body">
-                            <!-- Form Fields -->
                             <div class="form-group">
                                 <label for="name">Nama</label>
                                 <input type="text" class="form-control" name="name" value="{{ $user->name }}"
@@ -88,13 +90,11 @@
                                 <label for="role">Role</label>
                                 <select name="role" class="form-control" required>
                                     <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
-                                    <option value="customer" {{ $user->role == 'customer' ? 'selected' : '' }}>Customer
-                                    </option>
+                                    <option value="user" {{ $user->role == 'user' ? 'selected' : '' }}>User</option>
                                 </select>
                             </div>
                         </div>
-                        <!-- Modal Footer -->
-                        <div class="modal-footer mt-2">
+                        <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                             <button type="submit" class="btn btn-primary">Simpan</button>
                         </div>
@@ -115,7 +115,6 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <!-- Form Fields -->
                         <div class="form-group">
                             <label for="name">Nama</label>
                             <input type="text" class="form-control" name="name" required>
@@ -136,11 +135,11 @@
                             <label for="role">Role</label>
                             <select name="role" class="form-control" required>
                                 <option value="admin">Admin</option>
-                                <option value="customer">Customer</option>
+                                <option value="user">User</option>
                             </select>
                         </div>
                     </div>
-                    <div class="modal-footer mt-2">
+                    <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                         <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>
@@ -148,7 +147,6 @@
             </div>
         </div>
     </div>
-
 @endsection
 
 @section('scripts')
@@ -158,7 +156,7 @@
 
             deleteButtons.forEach(function(button) {
                 button.addEventListener('click', function(e) {
-                    e.preventDefault(); // Mencegah form submit langsung
+                    e.preventDefault();
                     const form = this.closest('form');
 
                     Swal.fire({

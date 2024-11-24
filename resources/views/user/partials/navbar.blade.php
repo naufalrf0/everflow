@@ -1,31 +1,40 @@
-<nav class="navbar navbar-expand-lg">
+<nav id="dynamicNavbar" class="navbar navbar-expand-lg fixed-top">
     <div class="container-fluid">
-        <a class="navbar-brand logo" href="{{ route('home') }}">EverFlow</a>
+        <!-- Logo Section -->
+        <a class="navbar-brand logo me-auto" href="{{ route('home') }}">EverFlow</a>
+
+        <!-- Toggle Button for Mobile View -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+
+        <!-- Navigation Links -->
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto nav-links d-flex">
+            <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <button onclick="location.href='{{ route('dashboard') }}'" class="nav-btn">Dashboard</button>
+                    <a href="{{ route('reviews.index') }}" class="nav-link">Ulasan</a>
                 </li>
                 <li class="nav-item">
-                    <button onclick="location.href='{{ route('reviews.index') }}'" class="nav-btn">User Reviews</button>
+                    <a href="{{ route('notifications.index') }}" class="nav-link">Notifikasi</a>
                 </li>
                 <li class="nav-item">
-                    <button onclick="location.href='{{ route('productprofile') }}'" class="nav-btn">Profil
-                        Produk</button>
-                </li>
-                <li class="nav-item">
-                    <button onclick="location.href='{{ route('notifikasi.index') }}'" class="nav-btn">Notifikasi</button>
-                </li>
-                <li class="nav-item">
-                    <button onclick="location.href='{{ route('forum.index') }}'" class="nav-btn">Forum Diskusi</button>
+                    <a href="{{ route('forum-chat.index') }}" class="nav-link">Forum Diskusi</a>
                 </li>
             </ul>
-            <button class="login-btn ms-2" onclick="location.href='{{ route('login') }}'">Login</button>
+
+            <!-- Conditional Login or Dashboard Button -->
+            <div class="d-flex ms-lg-3">
+                @auth
+                    <button onclick="location.href='{{ route('dashboard') }}'" class="btn btn-primary">
+                        Dashboard
+                    </button>
+                @else
+                    <button onclick="location.href='{{ route('login') }}'" class="btn btn-primary">
+                        Login
+                    </button>
+                @endauth
+            </div>
         </div>
-       
     </div>
 </nav>

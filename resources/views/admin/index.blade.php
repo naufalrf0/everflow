@@ -1,7 +1,7 @@
 @extends('layouts.admin-layout')
 
 @section('title', 'Dashboard Pemantauan')
-@section('page-title', 'Dashboard Pemantauan')
+@section('page-title', 'Dashboard ')
 
 @section('meta')
     <meta name="description" content="Dashboard Pemantauan Generator untuk memonitor kinerja alat power generator.">
@@ -14,7 +14,7 @@
             <div class="col-md-4 mb-3">
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
-                        <h5>{{ $dashboardData['kecepatan_bandul'] }} RPM</h5>
+                        <h5>{{ $dashboardData['kecepatan_bandul'] ?? 0 }} RPM</h5>
                         <p>Kecepatan Bandul</p>
                     </div>
                 </div>
@@ -22,7 +22,7 @@
             <div class="col-md-4 mb-3">
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
-                        <h5>{{ $dashboardData['total_energi'] }} KW</h5>
+                        <h5>{{ $dashboardData['total_energi'] ?? 0 }} KW</h5>
                         <p>Energi yang Dihasilkan</p>
                     </div>
                 </div>
@@ -30,7 +30,7 @@
             <div class="col-md-4 mb-3">
                 <div class="card text-center shadow-sm">
                     <div class="card-body">
-                        <h5>{{ $dashboardData['voltase_baterai'] }} V</h5>
+                        <h5>{{ $dashboardData['voltase_baterai'] ?? 0 }} V</h5>
                         <p>Voltase Baterai</p>
                     </div>
                 </div>
@@ -55,10 +55,14 @@
                             <tbody>
                                 @forelse ($dashboardData['report'] as $report)
                                     <tr>
-                                        <td>{{ $report->waktu_kinerja_bandul->format('H:i') }}</td>
-                                        <td>{{ $report->kecepatan_bandul }}</td>
-                                        <td>{{ $report->total_daya }}</td>
-                                        <td>{{ number_format(($report->total_daya / 150) * 100, 1) }}%</td>
+                                        <td>
+                                            {{ isset($report['waktu_kinerja_bandul']) 
+                                                ? \Carbon\Carbon::parse($report['waktu_kinerja_bandul'])->translatedFormat('l, d F Y H:i') 
+                                                : '--' }}
+                                        </td>
+                                        <td>{{ $report['kecepatan_bandul'] ?? 0 }}</td>
+                                        <td>{{ $report['total_daya'] ?? 0 }}</td>
+                                        <td>{{ isset($report['total_daya']) ? number_format(($report['total_daya'] / 150) * 100, 1) : '--' }}%</td>
                                     </tr>
                                 @empty
                                     <tr>
@@ -66,6 +70,7 @@
                                     </tr>
                                 @endforelse
                             </tbody>
+                            
                         </table>
                     </div>
                 </div>
@@ -94,10 +99,10 @@
             var performanceChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: @json($dashboardData['report']->pluck('waktu_kinerja_bandul')->map(fn($waktu) => $waktu->format('H:i'))),
+                    labels: @json($dashboardData['report']->pluck('waktu_kinerja_bandul')->map(fn($time) => $time ?? '--')->toArray()),
                     datasets: [{
                         label: 'Daya (kW)',
-                        data: @json($dashboardData['report']->pluck('total_daya')),
+                        data: @json($dashboardData['report']->pluck('total_daya')->map(fn($value) => $value ?? 0)->toArray()),
                         borderColor: 'rgba(75, 192, 192, 1)',
                         borderWidth: 2,
                         fill: false

@@ -2,16 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Bandul;
+use App\Services\BandulService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class BandulController extends Controller
 {
+    protected $bandulService;
+
+    public function __construct(BandulService $bandulService)
+    {
+        $this->bandulService = $bandulService;
+    }
+
     public function index()
     {
-        $banduls = Bandul::all();
-        return view('admin.bandul', compact('banduls'));
+        try {
+            $banduls = $this->bandulService->getAllBandul();
+            return view('admin.bandul-management', compact('banduls'));
+        } catch (\Exception $e) {
+            Log::error('Failed to fetch Bandul data: ' . $e->getMessage());
+            return redirect()->route('bandul-management.index')->with('error', 'Gagal memuat data Bandul.');
+        }
     }
 
     public function store(Request $request)
@@ -21,15 +33,16 @@ class BandulController extends Controller
             'kecepatan_bandul' => 'required|numeric',
             'total_daya' => 'required|numeric',
             'hasil_daya' => 'required|numeric',
-            'waktu_kinerja_bandul' => 'required|date',
+            'waktu_kinerja_bandul' => 'required|date_format:Y-m-d\TH:i',
         ]);
 
-        $bandul = new Bandul($request->all());
-        $bandul->customer_id = Auth::id(); // Mengisi customer_id dengan ID pengguna yang sedang login
-        $bandul->admin_id = Auth::id();    // Jika diperlukan
-        $bandul->save();
-
-        return redirect()->route('bandul-management.index')->with('success', 'Data Bandul berhasil ditambahkan.');
+        try {
+            $this->bandulService->createBandul($request->all());
+            return redirect()->route('bandul-management.index')->with('success', 'Data Bandul berhasil ditambahkan.');
+        } catch (\Exception $e) {
+            Log::error('Failed to create Bandul: ' . $e->getMessage());
+            return redirect()->route('bandul-management.index')->with('error', 'Gagal menambahkan data Bandul.');
+        }
     }
 
     public function update(Request $request, $id)
@@ -39,23 +52,26 @@ class BandulController extends Controller
             'kecepatan_bandul' => 'required|numeric',
             'total_daya' => 'required|numeric',
             'hasil_daya' => 'required|numeric',
-            'waktu_kinerja_bandul' => 'required|date',
+            'waktu_kinerja_bandul' => 'required|date_format:Y-m-d\TH:i',
         ]);
 
-        $bandul = Bandul::findOrFail($id);
-        $bandul->fill($request->all());
-        $bandul->customer_id = Auth::id(); // Mengisi customer_id jika diperlukan
-        $bandul->admin_id = Auth::id();    // Jika diperlukan
-        $bandul->save();
-
-        return redirect()->route('bandul-management.index')->with('success', 'Data Bandul berhasil diubah.');
+        try {
+            $this->bandulService->updateBandul($id, $request->all());
+            return redirect()->route('bandul-management.index')->with('success', 'Data Bandul berhasil diubah.');
+        } catch (\Exception $e) {
+            Log::error("Failed to update Bandul with ID {$id}: " . $e->getMessage());
+            return redirect()->route('bandul-management.index')->with('error', 'Gagal mengubah data Bandul.');
+        }
     }
 
     public function destroy($id)
     {
-        $bandul = Bandul::findOrFail($id);
-        $bandul->delete();
-
-        return redirect()->route('bandul-management.index')->with('success', 'Data Bandul berhasil dihapus.');
+        try {
+            $this->bandulService->deleteBandul($id);
+            return redirect()->route('bandul-management.index')->with('success', 'Data Bandul berhasil dihapus.');
+        } catch (\Exception $e) {
+            Log::error("Failed to delete Bandul with ID {$id}: " . $e->getMessage());
+            return redirect()->route('bandul-management.index')->with('error', 'Gagal menghapus data Bandul.');
+        }
     }
 }

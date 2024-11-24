@@ -31,50 +31,48 @@
         </div>
 
         <div class="d-flex">
-            {{-- Notification --}}
-            {{-- <div class="dropdown d-inline-block">
+            <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item noti-icon" id="page-header-notifications-dropdown-v"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <i class="bx bx-bell icon-sm align-middle"></i>
-                    <span class="noti-dot bg-danger rounded-pill">1</span>
+                    @php
+                        $notificationCount = \App\Models\Notifikasi::count();
+                    @endphp
+                    @if($notificationCount > 0)
+                        <span class="noti-dot bg-danger rounded-pill">{{ $notificationCount }}</span>
+                    @endif
                 </button>
                 <div class="dropdown-menu dropdown-menu-xl dropdown-menu-end p-0"
-                    aria-labelledby="page-header-notifications-dropdown-v">
+                     aria-labelledby="page-header-notifications-dropdown-v">
                     <div class="p-3">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h5 class="m-0 font-size-15"> Notifications </h5>
-                            </div>
-                            <div class="col-auto">
-                                <a href="#!" class="small fw-semibold text-decoration-underline"> Mark all as read</a>
+                                <h5 class="m-0 font-size-15"> Notifikasi </h5>
                             </div>
                         </div>
                     </div>
                     <div data-simplebar style="max-height: 250px;">
-                        <a href="#!" class="text-reset notification-item">
-                            <div class="d-flex">
-                                <div class="flex-shrink-0 me-3">
-                                    <img src="{{ URL::asset('build/images/users/empty-profile.png') }}"
-                                        class="rounded-circle avatar-sm" alt="user-pic">
-                                </div>
-                                <div class="flex-grow-1">
-                                    <p class="text-muted font-size-13 mb-0 float-end">1 hour ago</p>
-                                    <h6 class="mb-1">James Lemire</h6>
-                                    <div>
-                                        <p class="mb-0">It will seem like simplified English.</p>
+                        @foreach(\App\Models\Notifikasi::latest()->take(6)->get() as $notification)
+                            <a href="#!" class="text-reset notification-item">
+                                <div class="d-flex">
+                                    <div class="flex-grow-1">
+                                        <p class="text-muted font-size-13 mb-0 float-end">
+                                            {{ $notification->created_at->diffForHumans() }}
+                                        </p>
+                                        <h6 class="mb-1">{{ $notification->deskripsi }}</h6>
                                     </div>
                                 </div>
-                            </div>
-                        </a>
+                            </a>
+                        @endforeach
                     </div>
                     <div class="p-2 border-top d-grid">
-                        <a class="btn btn-sm btn-link font-size-14 btn-block text-center" href="javascript:void(0)">
-                            <i class="uil-arrow-circle-right me-1"></i> <span>Lihat Selengkapnya..</span>
+                        <a class="btn btn-sm btn-link font-size-14 btn-block text-center" href="{{ route('notifications.index') }}">
+                            <i class="uil-arrow-circle-right me-1"></i> <span>Lihat Semua Notifikasi...</span>
                         </a>
                     </div>
                 </div>
-            </div> --}}
-
+            </div>
+            
             <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item user text-start d-flex align-items-center"
                     id="page-header-user-dropdown-v" data-bs-toggle="dropdown" aria-haspopup="true"

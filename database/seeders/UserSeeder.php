@@ -2,31 +2,33 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
+use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     *
+     * @return void
      */
     public function run()
     {
-        // Buat Admin
+        // Create admin user
         User::create([
-            'name' => 'Admin EverFlow',
-            'email' => 'admin@everflow.com',
-            'password' => Hash::make('Admin#1234'), // Hashing benar
+            'name' => 'Admin Everflow',
+            'email' => 'admin@everflow.site',
+            'password' => Hash::make('Admin#1234'),
             'role' => 'admin',
         ]);
 
-        // Buat Customer
+        // Create regular user
         User::create([
-            'name' => 'Customer EverFlow',
-            'email' => 'customer@everflow.com',
-            'password' => Hash::make('Admin#1234'), // Hashing benar
-            'role' => 'customer',
+            'name' => 'Customer Everflow',
+            'email' => 'customer@everflow.site',
+            'password' => Hash::make('Admin#1234'),
+            'role' => 'user',
         ]);
     }
 }

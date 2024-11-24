@@ -13,23 +13,24 @@ return new class extends Migration
     {
         Schema::create('t_users', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 100);
+            $table->string('name', 50)->unique();
             $table->string('email', 100)->unique();
-            $table->string('password', 100);
-            $table->enum('role', ['admin', 'customer'])->default('customer');
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->enum('role', ['admin', 'user'])->default('user');
             $table->rememberToken();
             $table->timestamps();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
+            $table->string('email', 100)->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });
 
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
+            $table->foreignId('user_id')->nullable()->constrained('t_users') ->onDelete('cascade')->index();
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
             $table->longText('payload');

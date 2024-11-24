@@ -5,49 +5,101 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Komentar extends Model
 {
     use HasFactory;
 
-    protected $table = 't_komentar'; // Nama tabel sesuai migration
+    protected $table = 't_komentar'; 
+    protected $primaryKey = 'komentar_id';
 
+    public $timestamps = false; 
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<string>
+     */
     protected $fillable = [
-        'customer_id',
-        'admin_id',
-        'post_id',
-        'isi_komentar',
-        'jumlah_like',
-        'waktu_komentar'
+        'user_id',
+        'bandul_id',
+        'review',
+        'rating',
+        'profile_image',
+        'is_approved',
+        'created_at',
     ];
 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array<string, string>
+     */
     protected $casts = [
-        'waktu_komentar' => 'datetime',
+        'is_approved' => 'boolean',
+        'created_at' => 'datetime',
     ];
 
-    public function customer(): BelongsTo
+    /**
+     * Define a relationship with the User model.
+     *
+     * @return BelongsTo
+     */
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'customer_id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function admin(): BelongsTo
+    /**
+     * Define a relationship with the Bandul model.
+     *
+     * @return BelongsTo
+     */
+    public function bandul(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'admin_id');
+        return $this->belongsTo(Bandul::class, 'bandul_id', 'id');
     }
 
-    public function post(): BelongsTo
+    /**
+     * Scope for fetching approved comments only.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeApproved($query)
     {
-        return $this->belongsTo(Forum::class, 'post_id');
+        return $query->where('is_approved', true);
     }
 
-    public function replies(): HasMany
+    /**
+     * Scope for fetching comments related to a specific bandul.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @param  int  $bandulId
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeForBandul($query, $bandulId)
     {
-        return $this->hasMany(Komentar::class, 'parent_id');
+        return $query->where('bandul_id', $bandulId);
     }
 
-    public function parent(): BelongsTo
+    /**
+     * Accessor for displaying the profile image URL.
+     *
+     * If no profile image is uploaded, it generates a text-based avatar
+     * using a public avatar API like UI Avatars.
+     *
+     * @return string
+     */
+    public function getProfileImageUrlAttribute(): string
     {
-        return $this->belongsTo(Komentar::class, 'parent_id');
+        if ($this->profile_image) {
+            return asset('storage/' . $this->profile_image);
+        }
+
+        $name = $this->user->name ?? 'Guest';
+        $encodedName = urlencode($name);
+
+        return "https://ui-avatars.com/api/?name={$encodedName}&background=007bff&color=ffffff&size=128";
     }
 }

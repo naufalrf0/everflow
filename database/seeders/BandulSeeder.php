@@ -2,52 +2,40 @@
 
 namespace Database\Seeders;
 
-use App\Models\Bandul;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Carbon;
+use App\Models\Bandul;
 
 class BandulSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     *
+     * @return void
      */
     public function run()
     {
-        $performances = [
-            [
-                'customer_id' => 1, 
-                'admin_id' => 1,
-                'voltase_baterai' => 12,
-                'kecepatan_bandul' => 1150,
-                'total_daya' => 145,
-                'hasil_daya' => 130,
-                'waktu_kinerja_bandul' => Carbon::parse('08:00'),
-            ],
-            [
-                'customer_id' => 1, 
-                'admin_id' => 1,
-                'voltase_baterai' => 12,
-                'kecepatan_bandul' => 1180,
-                'total_daya' => 148,
-                'hasil_daya' => 135,
-                'waktu_kinerja_bandul' => Carbon::parse('12:00'),
-            ],
-            [
-                'customer_id' => 1, 
-                'admin_id' => 1,
-                'voltase_baterai' => 12,
-                'kecepatan_bandul' => 1200,
-                'total_daya' => 150,
-                'hasil_daya' => 140,
-                'waktu_kinerja_bandul' => Carbon::parse('16:00'),
-            ]
-        ];
+        Bandul::create([
+            'voltase_baterai' => 12,
+            'kecepatan_bandul' => 3000,
+            'total_daya' => 15,
+            'hasil_daya' => 14.5,
+            'waktu_kinerja_bandul' => now(),
+        ]);
 
-        foreach ($performances as $performance) {
-            Bandul::create($performance);
-        }
+        Bandul::create([
+            'voltase_baterai' => 24,
+            'kecepatan_bandul' => 2800,
+            'total_daya' => 20,
+            'hasil_daya' => 19,
+            'waktu_kinerja_bandul' => now()->subHours(1),
+        ]);
 
-        $this->command->info('3 data berhasil dimasukkan ke tabel t_bandul.');
+        Bandul::create([
+            'voltase_baterai' => 48,
+            'kecepatan_bandul' => 2500,
+            'total_daya' => 25,
+            'hasil_daya' => 23.5,
+            'waktu_kinerja_bandul' => now()->subHours(2),
+        ]);
     }
 }
